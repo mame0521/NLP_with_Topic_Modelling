@@ -1,48 +1,35 @@
 # NLP_with_Topic_Modelling
 
-# Document Clustering and Topic Modeling
+# Document Clustering with Topic Modeling
 
-In this project, I used unsupervised learning models to cluster unlabeled documents into different groups, visualized the results, and identified their latent topics/structures.
+Topic Modeling was applied to cluster unlabeled documents into different classes and identified  latent topics in this project.
 
 ## Contents
 
-* [Part 1: Load Data](#Part-1:-Load-Data)
-* [Part 2: Tokenizing and Stemming](#Part-2:-Tokenizing-and-Stemming)
-* [Part 3: TF-IDF](#Part-3:-TF-IDF)
-* [Part 4: K-means clustering](#Part-4:-K-means-clustering)
-* [Part 5: Topic Modeling - Latent Dirichlet Allocation](#Part-5:-Topic-Modeling---Latent-Dirichlet-Allocation)
-* [Part 6: Discussion](#Part-6:-Discussion)
-
-# Part 1: Load Data
+# Part 1: Data preprocessing 
 
 
 ```python
 # Load libraries
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
 import nltk
 import random
 import re
-import seaborn as sns
-import matplotlib.pyplot as plt
-%matplotlib inline
-%config InlineBackend.figure_format = 'retina'
 
-from nltk.stem.snowball import SnowballStemmer
-from nltk.tokenize import word_tokenize
-from nltk.corpus import stopwords
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 from sklearn.cluster import KMeans
 from yellowbrick.cluster import SilhouetteVisualizer
 from sklearn.decomposition import PCA, KernelPCA
 from sklearn.decomposition import LatentDirichletAllocation
+from nltk.stem.snowball import SnowballStemmer
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
 
-random.seed(20202200)
+random.seed(20220522)
 ```
-
-    /Users/yanhans/opt/anaconda3/lib/python3.7/site-packages/sklearn/utils/deprecation.py:144: FutureWarning: The sklearn.metrics.classification module is  deprecated in version 0.22 and will be removed in version 0.24. The corresponding classes / functions should instead be imported from sklearn.metrics. Anything that cannot be imported from sklearn.metrics is now part of the private API.
-      warnings.warn(message, FutureWarning)
-
 
 
 ```python
@@ -116,12 +103,10 @@ df.head()
 
 
 
-
 ```python
-# Cheching if there is any missing value
+# Cheching  missing value
 df.isnull().sum()
 ```
-
 
 
 
@@ -138,7 +123,6 @@ df.star_rating.value_counts()
 
 
 
-
     5    3000
     4    3000
     3    3000
@@ -147,10 +131,8 @@ df.star_rating.value_counts()
     Name: star_rating, dtype: int64
 
 
-
-
 ```python
-# Take only the review_body column for unsupervised learning task
+# Take only the review_body column 
 
 data = df.loc[:, 'review_body'].tolist()
 print(type(data))
@@ -181,7 +163,7 @@ for _ in range(5):
 
 ​    
 
-# Part 2: Tokenizing and Stemming
+# Part 2: Tokenize and Stem
 
 
 ```python
@@ -191,10 +173,10 @@ stopwords = stopwords.words('english')
 print("We use " + str(len(stopwords)) + " stop-words from nltk library.")
 ```
 
-    We use 179 stop-words from nltk library.
+ use 179 stop-words from nltk library.
 
 
-Use our defined functions to analyze (i.e. tokenize, stem) our reviews.
+Use tokenize and stem functions to analyze the reviews.
 
 
 ```python
@@ -240,9 +222,9 @@ tokenization_and_stemming(data[42])
 
 
 
-# Part 3: TF-IDF:Term Frequency-Inverse Document Frequency
+# Part 3: Term Frequency-Inverse Document Frequency(TF-IDF)
 
-In this part, I use the TfidfVectorizer() from the sklearn library to create the tf-idf matrix
+create the tf-idf matrix using the TfidfVectorizer()
 
 
 ```python
@@ -273,7 +255,6 @@ print("In total, there are {} reviews and {} terms.".format(
 # Check the parameters
 tfidf_model.get_params()
 ```
-
 
 
 
@@ -322,9 +303,9 @@ tfidf_matrix
 
 
 
-# Part 4: K-means clustering
+# Part 4: clustering using K-means 
 
-In this part, I perform the K-means algorithm to find out possible clusters in our reviews dataset. 
+find out possible clusters using  K-means algorithm. 
 
 
 ```python
@@ -352,7 +333,7 @@ for num in num_clusters:
 ![png](https://gitee.com/flycloud2009_cloudlou/img/raw/master/img/output_25_2.png)
 
 
-From the silhouette plot above, we can see the average silhouette coefficients are very similar among different solutions. There is no significant preference over one solution. As we know our dataset contains the product reviews, the reviews probably would fall into one of positive, neutral or negative clusters. So I decide to use 3 as the number of clusters in the kmeans.
+the dataset contains the product reviews, which would fall into one of positive, neutral or negative clusters. So select 3 as the number of clusters in the kmeans.
 
 
 ```python
@@ -566,9 +547,10 @@ kmeans_results.groupby('cluster')['star_rating'].value_counts()
 
 
 
-We can see that cluster 0 contains more negative reviews while cluster 2 contains more  positive reviews. The reviews in cluster 1 are more neutral. And we can also see that the sizes are quite different among groups.
+As shown above, that cluster 0 contains more negative reviews, cluster 2 indicates more  positive reviews and the reviews in cluster 1 represent more neutral. 
 
-## 4.2. Plot the kmeans result
+
+## 4.2. Plot the clustering result
 
 
 ```python
@@ -1157,16 +1139,13 @@ df_document_topic.groupby('topic')['star_rating'].value_counts()
 
 
 
-From the result above, it seems that topic 0 is more like a negative review topic. We also see words like "replace" and "return" score very high in the output.
-Both topic 1 and 2 seem to be kind of positive.
+the result above show that topic 0 is more like a negative topic, topic 1 and 2 seem to be positive topic.
 
-# Part 6: Discussion
+# Part 6: Conclusion
 
-In this project, I tried out both K-means and LDA as examples of clustering and topic modeling.
-
-K-means has some limitations. It is very sensitive to outliers. As you may have already seen, it can produce very small clusters corresponding to outliers. And K-means also has difficulties with clusters of different sizes and densities. That is why I randomly select equal size subsets of different star ratings reviews from the whole dataset.
-
-Latent Dirichlet allocation (LDA) is a generative statistical model that allows sets of observations to be explained by unobserved groups that explain why some parts of the data are similar. The LDA model is highly modular and can, therefore, be easily extended. The main field of interest is modeling relations between topics. In this task, LDA did a better job of clustering the reviews.
+The experiment results show:
+1) K-means is very sensitive to outliers and could produce very small incorrect clusters, and also works badly with clusters of different sizes and densities.
+2) LDA is a generative statistical model that allows sets of observations to be explained by unobserved classes. In this task, LDA works better than K-means.
 
 
 ```python
