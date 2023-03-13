@@ -2,9 +2,14 @@
 
 # Document Clustering with Topic Modeling
 
-Topic Modeling was applied to cluster unlabeled documents into different classes and identified  latent topics in this project.
+Topic Modeling was applied to cluster unlabeled documents into different classes and identified  latent topics in the user review dataset. This data set includes reviews of a particular product from an e-commerce company.
 
 ## Contents
+
+1. Preprocessed review text by tokenization, stemming, removing stop words and extracted features by Term Frequency – Inverse Document Frequency (TFIDF)
+2. Trained unsupervised learning models of K-means clustering and Latent Dirichlet Analysis
+3. Identified latent topics and keywords of each review
+4. Visualized results by dimensionality reduction using Principal Component Analysis (PCA)
 
 # Part 1: Data preprocessing 
 
